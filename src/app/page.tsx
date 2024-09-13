@@ -8,7 +8,7 @@ import ThreadsTabs from "@/components/app/home/threads-tabs";
 import Sidebar from "@/layouts/app/sidebar";
 import Link from "next/link";
 
-export default function Component() {
+export default function Home() {
   console.log("NEXT .env file => ", process.env.NEXT_PUBLIC_BASE_API_URL);
   return (
     <main className="container mx-auto px-4 py-8">
