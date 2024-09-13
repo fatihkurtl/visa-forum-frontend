@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { SearchIcon, BellIcon, MenuIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import { slugify } from "@/utils/slugify";
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -57,13 +58,15 @@ export default function Header() {
             <BellIcon className="h-5 w-5" />
             <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
           </Button>
-          <Avatar>
-            <AvatarImage
-              src="/placeholder.svg?height=32&width=32"
-              alt="@user"
-            />
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
+          <Link href={`/members/${slugify("John Doe")}`}>
+            <Avatar>
+              <AvatarImage
+                src="/placeholder.svg?height=32&width=32"
+                alt="@user"
+              />
+              <AvatarFallback>U</AvatarFallback>
+            </Avatar>
+          </Link>
           <Button
             variant="ghost"
             size="icon"
@@ -86,7 +89,10 @@ export default function Header() {
               <Link href="/" className="text-gray-600 hover:text-gray-800 py-2">
                 Home
               </Link>
-              <Link href="/threads" className="text-gray-600 hover:text-gray-800 py-2">
+              <Link
+                href="/threads"
+                className="text-gray-600 hover:text-gray-800 py-2"
+              >
                 Threads
               </Link>
               <a href="#" className="text-gray-600 hover:text-gray-800 py-2">

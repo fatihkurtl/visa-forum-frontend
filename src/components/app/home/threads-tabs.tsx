@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquareIcon, UserIcon, ClockIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { slugify } from "@/utils/title-slug";
+import { slugify } from "@/utils/slugify";
 
 export default function ThreadsTabs() {
   return (

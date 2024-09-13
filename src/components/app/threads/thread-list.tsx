@@ -18,7 +18,7 @@ import {
   PlusCircleIcon,
   FilterIcon,
 } from "lucide-react";
-import { slugify } from "@/utils/title-slug";
+import { slugify } from "@/utils/slugify";
 import Link from "next/link";
 
 
