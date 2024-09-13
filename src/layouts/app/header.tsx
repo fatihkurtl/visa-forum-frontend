@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { SearchIcon, BellIcon, MenuIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -15,9 +16,12 @@ export default function Header() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">VisaConnect Forum</h1>
         <nav className="hidden md:flex space-x-4">
-          <a href="#" className="text-gray-600 hover:text-gray-800">
+          <Link href="/" className="text-gray-600 hover:text-gray-800">
             Home
-          </a>
+          </Link>
+          <Link href="/threads" className="text-gray-600 hover:text-gray-800">
+            Threads
+          </Link>
           <a href="#" className="text-gray-600 hover:text-gray-800">
             Categories
           </a>
@@ -79,9 +83,12 @@ export default function Header() {
             className="md:hidden bg-white border-t"
           >
             <div className="container mx-auto px-4 py-2 flex flex-col space-y-2">
-              <a href="#" className="text-gray-600 hover:text-gray-800 py-2">
+              <Link href="/" className="text-gray-600 hover:text-gray-800 py-2">
                 Home
-              </a>
+              </Link>
+              <Link href="/threads" className="text-gray-600 hover:text-gray-800 py-2">
+                Threads
+              </Link>
               <a href="#" className="text-gray-600 hover:text-gray-800 py-2">
                 Categories
               </a>

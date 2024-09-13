@@ -3,8 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquareIcon, UserIcon, ClockIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { slugify } from "@/utils/title-slug";
 
-export default function Threads() {
+export default function ThreadsTabs() {
   return (
     <Tabs defaultValue="recent" className="mb-6">
       <TabsList className="grid w-full grid-cols-3">
@@ -54,7 +56,7 @@ export default function Threads() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600">
-                        <a href="#">{thread.title}</a>
+                        <Link href={`/threads/${slugify(thread.title)}`}>{thread.title}</Link>
                       </h3>
                       <p className="text-sm text-gray-500 mt-1">
                         Started by {thread.user}
