@@ -41,9 +41,8 @@ export default function Header() {
           >
             <Input
               placeholder="Search threads..."
-              className={`pl-10 pr-4 py-2 w-full bg-gray-100 rounded-full transition-all ${
-                isSearchOpen ? "opacity-100" : "opacity-0"
-              }`}
+              className={`pl-10 pr-4 py-2 w-full bg-gray-100 rounded-full transition-all ${isSearchOpen ? "opacity-100" : "opacity-0"
+                }`}
             />
             <Button
               variant="ghost"

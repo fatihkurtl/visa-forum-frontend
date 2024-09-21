@@ -92,95 +92,95 @@ export default function ThreadList() {
     });
   return (
     <div className="md:col-span-3">
-            <Card className="mb-6">
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center space-x-2">
+              <FilterIcon className="h-5 w-5 text-gray-500" />
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="latest">Latest</SelectItem>
+                  <SelectItem value="mostViewed">Most Viewed</SelectItem>
+                  <SelectItem value="mostReplies">
+                    Most Replies
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <FilterIcon className="h-5 w-5 text-gray-500" />
+              <Select
+                value={filterCategory}
+                onValueChange={setFilterCategory}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="Tourist Visa">
+                    Tourist Visa
+                  </SelectItem>
+                  <SelectItem value="Schengen Visa">
+                    Schengen Visa
+                  </SelectItem>
+                  <SelectItem value="Student Visa">
+                    Student Visa
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button>
+              <PlusCircleIcon className="mr-2 h-5 w-5" />
+              New Thread
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-4">
+        {sortedAndFilteredThreads.map((thread, index) => (
+          <motion.div
+            key={thread.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+          >
+            <Card>
               <CardContent className="p-4">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center space-x-2">
-                    <FilterIcon className="h-5 w-5 text-gray-500" />
-                    <Select value={sortBy} onValueChange={setSortBy}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Sort by" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="latest">Latest</SelectItem>
-                        <SelectItem value="mostViewed">Most Viewed</SelectItem>
-                        <SelectItem value="mostReplies">
-                          Most Replies
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600">
+                      <Link href={`/threads/${slugify(thread.title)}`}>{thread.title}</Link>
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Started by {thread.user}
+                    </p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <FilterIcon className="h-5 w-5 text-gray-500" />
-                    <Select
-                      value={filterCategory}
-                      onValueChange={setFilterCategory}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Filter by category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        <SelectItem value="Tourist Visa">
-                          Tourist Visa
-                        </SelectItem>
-                        <SelectItem value="Schengen Visa">
-                          Schengen Visa
-                        </SelectItem>
-                        <SelectItem value="Student Visa">
-                          Student Visa
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button>
-                    <PlusCircleIcon className="mr-2 h-5 w-5" />
-                    New Thread
-                  </Button>
+                  <Badge variant="secondary">{thread.category}</Badge>
+                </div>
+                <div className="flex items-center space-x-4 mt-4 text-sm text-gray-500">
+                  <span className="flex items-center">
+                    <MessageSquareIcon className="h-4 w-4 mr-1" />
+                    {thread.replies} replies
+                  </span>
+                  <span className="flex items-center">
+                    <UserIcon className="h-4 w-4 mr-1" />
+                    {thread.views} views
+                  </span>
+                  <span className="flex items-center">
+                    <ClockIcon className="h-4 w-4 mr-1" />
+                    {thread.lastReply}
+                  </span>
                 </div>
               </CardContent>
             </Card>
-
-            <div className="space-y-4">
-              {sortedAndFilteredThreads.map((thread, index) => (
-                <motion.div
-                  key={thread.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600">
-                            <Link href={`/threads/${slugify(thread.title)}`}>{thread.title}</Link>
-                          </h3>
-                          <p className="text-sm text-gray-500 mt-1">
-                            Started by {thread.user}
-                          </p>
-                        </div>
-                        <Badge variant="secondary">{thread.category}</Badge>
-                      </div>
-                      <div className="flex items-center space-x-4 mt-4 text-sm text-gray-500">
-                        <span className="flex items-center">
-                          <MessageSquareIcon className="h-4 w-4 mr-1" />
-                          {thread.replies} replies
-                        </span>
-                        <span className="flex items-center">
-                          <UserIcon className="h-4 w-4 mr-1" />
-                          {thread.views} views
-                        </span>
-                        <span className="flex items-center">
-                          <ClockIcon className="h-4 w-4 mr-1" />
-                          {thread.lastReply}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
   );
 }
