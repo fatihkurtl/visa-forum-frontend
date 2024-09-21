@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 export default function Footer() {
     return (
@@ -19,9 +20,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-800">
+                <Link href="/contact" className="text-gray-600 hover:text-gray-800">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
