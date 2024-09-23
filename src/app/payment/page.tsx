@@ -28,7 +28,7 @@ export default function VisaChatBotPayment() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-center mb-6">VisaConnect ChatBot</h1>
       <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-        Vize başvuru sürecinizde size yardımcı olacak yapay zeka destekli chatbot&apos;umuza hoş geldiniz. 
+        Vize başvuru sürecinizde size yardımcı olacak yapay zeka destekli chatbot&apos;umuza hoş geldiniz.
         7/24 erişilebilir uzman yardımı için hemen abone olun!
       </p>
 
