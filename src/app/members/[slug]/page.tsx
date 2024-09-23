@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -8,10 +8,13 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
-import { CalendarIcon, MessageSquareIcon, UserIcon, SettingsIcon, AwardIcon, TrendingUpIcon } from "lucide-react"
+import { CalendarIcon, MessageSquareIcon, UserIcon, SettingsIcon, AwardIcon, TrendingUpIcon, UserPlusIcon, UsersIcon } from "lucide-react"
+import Link from 'next/link'
 
 export default function UserProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(true)
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [followersCount, setFollowersCount] = useState(1234) // Initial followers count
 
   const sharedTopics = [
     { id: 1, title: "US B1/B2 Visa Slot Available", date: "2023-06-10", replies: 15, views: 230 },
@@ -22,6 +25,13 @@ export default function UserProfilePage() {
     { id: 3, title: "Canada Study Permit Processing Time", date: "2023-06-05", yourComment: "Thanks for the information! This is really helpful." },
     { id: 4, title: "UK Skilled Worker Visa Requirements", date: "2023-05-30", yourComment: "Does anyone know if the rules have changed recently?" },
   ]
+
+  const handleFollowClick = () => {
+    setIsFollowing(!isFollowing)
+    // Update followers count
+    setFollowersCount(prevCount => isFollowing ? prevCount - 1 : prevCount + 1)
+    // Here you would typically make an API call to update the follow status
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -39,15 +49,21 @@ export default function UserProfilePage() {
                 <Badge variant="secondary">Tourist Visa Expert</Badge>
                 <Badge variant="secondary">Helpful Member</Badge>
               </div>
+              <div className="flex items-center justify-center md:justify-start mt-2">
+                <UsersIcon className="h-4 w-4 mr-1 text-gray-500" />
+                <span className="text-gray-600">{followersCount} followers</span>
+              </div>
             </div>
             <div className="flex flex-col space-y-2">
-              <Button>
-                <SettingsIcon className="mr-2 h-4 w-4" />
-                Edit Profile
-              </Button>
-              <Button variant="outline">
-                <MessageSquareIcon className="mr-2 h-4 w-4" />
-                Message
+              <Link href="/members/edit">
+                <Button>
+                  <SettingsIcon className="mr-2 h-4 w-4" />
+                  Edit Profile
+                </Button>
+              </Link>
+              <Button variant="outline" onClick={handleFollowClick}>
+                <UserPlusIcon className="mr-2 h-4 w-4" />
+                {isFollowing ? 'Unfollow' : 'Follow'}
               </Button>
             </div>
           </div>
