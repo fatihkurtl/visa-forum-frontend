@@ -133,10 +133,12 @@ export default function ThreadList() {
                 </SelectContent>
               </Select>
             </div>
-            <Button>
-              <PlusCircleIcon className="mr-2 h-5 w-5" />
-              New Thread
-            </Button>
+            <Link href="/threads/create">
+              <Button>
+                <PlusCircleIcon className="mr-2 h-5 w-5" />
+                New Thread
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>
