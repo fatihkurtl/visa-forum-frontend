@@ -32,6 +32,16 @@ export default function LoginForm() {
         e.preventDefault()
         try {
             const response = await memberHelper.login(formData)
+
+            if (formData.identifier === "" || formData.password === "") {
+                toast({
+                    title: "Giriş Hatası",
+                    description: "Lütfen e-posta adresinizi/kullanıcı adınızı ve şifrenizi giriniz.",
+                    variant: "destructive",
+                });
+                return
+            }
+
             console.log("Response: ", response);
             if ('non_field_errors' in response) {
                 toast({

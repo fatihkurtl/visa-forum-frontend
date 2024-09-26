@@ -36,9 +36,9 @@ export default function Header() {
   }, [])
 
   const notifications = [
-    { id: 1, text: "New reply to your thread", time: "5 minutes ago" },
-    { id: 2, text: "Your post was liked", time: "1 hour ago" },
-    { id: 3, text: "New forum announcement", time: "1 day ago" },
+    { id: 1, text: "Konunuza yeni yanıt", time: "5 dakika önce" },
+    { id: 2, text: "Gönderiniz beğenildi", time: "1 saat önce" },
+    { id: 3, text: "Yeni forum duyurusu", time: "1 gün önce" },
   ]
 
   return (
@@ -51,19 +51,19 @@ export default function Header() {
           </Link>
           <nav className="hidden lg:flex space-x-6">
             <Link href="/" className="text-gray-600 hover:text-gray-800 font-medium">
-              Home
+              Anasayfa
             </Link>
             <Link href="/threads" className="text-gray-600 hover:text-gray-800 font-medium">
-              Threads
+              Konular
             </Link>
             <Link href="/categories" className="text-gray-600 hover:text-gray-800 font-medium">
-              Categories
+              Kategoriler
             </Link>
             <Link href="/members" className="text-gray-600 hover:text-gray-800 font-medium">
-              Members
+              Üyeler
             </Link>
             <Link href="/visaBot" className="text-gray-600 hover:text-gray-800 font-medium">
-              Visa Chat Bot (Coming Soon)
+              Vize Sohbet Botu (Çok Yakında)
             </Link>
           </nav>
           <div className="flex items-center space-x-4">
@@ -161,19 +161,19 @@ export default function Header() {
           >
             <div className="container mx-auto px-4 py-2 flex flex-col space-y-2">
               <Link href="/" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
-                Home
+                Anasayfa
               </Link>
               <Link href="/threads" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
-                Threads
+                Konular
               </Link>
               <Link href="/categories" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
-                Categories
+                Kategoriler
               </Link>
               <Link href="/members" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
-                Members
+                Üyeler
               </Link>
               <Link href="/visaBot" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
-                Visa Chat Bot (Coming Soon)
+                Vize Sohbet Botu (Çok Yakında)
               </Link>
               <div className="relative">
                 <Input
