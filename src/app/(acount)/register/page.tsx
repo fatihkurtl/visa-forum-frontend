@@ -72,6 +72,15 @@ export default function VisaForumRegisterPage() {
             })
             return
         }
+        if (formData.username.length < 4) {
+            toast({
+                title: 'Hata',
+                description: 'Kullanıcı adı en az 4 karakter olmalıdır.',
+                variant: 'destructive',
+                duration: 4000,
+            })
+            return
+        }
         if (!formData.terms) {
             toast({
                 title: 'Hata',
@@ -90,10 +99,19 @@ export default function VisaForumRegisterPage() {
                     title: 'Hesap oluşturuldu',
                     description: response.message,
                     duration: 4000,
-                    onAnimationEnd: () => {
-                        window.location.href = '/login'
-                    }
                 })
+                setFormData({
+                    firstname: '',
+                    lastname: '',
+                    username: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                    terms: false,
+                })
+                setTimeout(() => {
+                    window.location.href = '/login'
+                }, 2000);
             } else {
                 toast({
                     title: 'Hata',
