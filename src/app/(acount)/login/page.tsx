@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -75,9 +76,9 @@ export default function VisaForumLoginPage() {
           <CardFooter className="flex justify-center">
             <div className="text-center text-sm">
               Don&quot;t have an account?{" "}
-              <a href="#" className="text-primary hover:underline font-medium">
+              <Link href="/register" className="text-primary hover:underline font-medium">
                 Sign up
-              </a>
+              </Link>
             </div>
           </CardFooter>
         </Card>

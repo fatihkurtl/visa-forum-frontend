@@ -1,13 +1,15 @@
 "use client"
+
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Bot, CheckCircle, Lock } from "lucide-react"
-import { Input } from "@/components/ui/input" // shadcn/ui input bileşeni
+import Image from 'next/image'
 
 const plans = [
   { name: 'Aylık Plan', price: '49.99', period: 'ay' },
@@ -19,9 +21,18 @@ export default function VisaChatBotPayment() {
   const [cardNumber, setCardNumber] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [cvv, setCvv] = useState('')
+  const [cardHolderName, setCardHolderName] = useState('')
 
-  const handlePayment = () => {
-    console.log("Ödeme bilgileri:", { cardNumber, expiryDate, cvv });
+  const handlePayment = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Burada iyzico ödeme işlemini başlatacak fonksiyon çağrılacak
+    console.log("iyzico ödeme işlemi başlatılıyor:", { 
+      plan: selectedPlan, 
+      cardNumber, 
+      expiryDate, 
+      cvv, 
+      cardHolderName 
+    });
   }
 
   return (
@@ -69,66 +80,86 @@ export default function VisaChatBotPayment() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Abonelik Planları</CardTitle>
-            <CardDescription>Size en uygun planı seçin</CardDescription>
+            <CardTitle>Abonelik ve Ödeme</CardTitle>
+            <CardDescription>Size en uygun planı seçin ve güvenle ödeyin</CardDescription>
           </CardHeader>
           <CardContent>
-            <RadioGroup defaultValue={selectedPlan.name} onValueChange={(value: string) => setSelectedPlan(plans.find(plan => plan.name === value) || plans[0])}>
-              {plans.map((plan) => (
-                <div key={plan.name} className="flex items-center space-x-2 mb-4">
-                  <RadioGroupItem value={plan.name} id={plan.name} />
-                  <Label htmlFor={plan.name} className="flex-grow">
-                    <span className="font-medium">{plan.name}</span>
-                    <span className="block text-sm text-gray-500">
-                      {plan.price} TL / {plan.period}
-                      {plan.discount && <span className="ml-2 text-green-600">{plan.discount}</span>}
-                    </span>
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </CardContent>
-          <CardFooter>
-            <div className="space-y-4 w-full">
-              <div>
-                <Label htmlFor="cardNumber">Kredi Kartı Numarası</Label>
-                <Input
-                  type="text"
-                  id="cardNumber"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                  placeholder="XXXX-XXXX-XXXX-XXXX"
-                />
-              </div>
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <Label htmlFor="expiryDate">Son Kullanma Tarihi</Label>
+            <form onSubmit={handlePayment}>
+              <RadioGroup 
+                defaultValue={selectedPlan.name} 
+                onValueChange={(value) => setSelectedPlan(plans.find(plan => plan.name === value) || plans[0])}
+                className="mb-6"
+              >
+                {plans.map((plan) => (
+                  <div key={plan.name} className="flex items-center space-x-2 mb-4">
+                    <RadioGroupItem value={plan.name} id={plan.name} />
+                    <Label htmlFor={plan.name} className="flex-grow">
+                      <span className="font-medium">{plan.name}</span>
+                      <span className="block text-sm text-gray-500">
+                        {plan.price} TL / {plan.period}
+                        {plan.discount && <span className="ml-2 text-green-600">{plan.discount}</span>}
+                      </span>
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="cardHolderName">Kart Üzerindeki İsim</Label>
                   <Input
-                    type="text"
-                    id="expiryDate"
-                    value={expiryDate}
-                    onChange={(e) => setExpiryDate(e.target.value)}
-                    placeholder="MM/YY"
+                    id="cardHolderName"
+                    placeholder="Ad Soyad"
+                    value={cardHolderName}
+                    onChange={(e) => setCardHolderName(e.target.value)}
+                    required
                   />
                 </div>
-                <div className="flex-1">
-                  <Label htmlFor="cvv">CVV</Label>
+                <div>
+                  <Label htmlFor="cardNumber">Kart Numarası</Label>
                   <Input
-                    type="text"
-                    id="cvv"
-                    value={cvv}
-                    onChange={(e) => setCvv(e.target.value)}
-                    placeholder="XXX"
+                    id="cardNumber"
+                    placeholder="1234 5678 9012 3456"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
+                    required
                   />
                 </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="expiryDate">Son Kullanma Tarihi</Label>
+                    <Input
+                      id="expiryDate"
+                      placeholder="AA/YY"
+                      value={expiryDate}
+                      onChange={(e) => setExpiryDate(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cvv">CVV</Label>
+                    <Input
+                      id="cvv"
+                      placeholder="123"
+                      value={cvv}
+                      onChange={(e) => setCvv(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <Button className="w-full" onClick={handlePayment}>
+              <Button type="submit" className="w-full mt-6">
                 <Lock className="mr-2 h-4 w-4" />
-                {selectedPlan.name} İçin Ödeme Yap
+                Güvenli Ödeme Yap
               </Button>
-            </div>
-          </CardFooter>
+            </form>
+          </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-8 text-center">
+        <p className="text-sm text-gray-500 mb-2">Ödeme altyapımız</p>
+        <Image src="/iyzico-logo.png" alt="iyzico logo" width={120} height={40} className="mx-auto" />
       </div>
 
       <Separator className="my-12" />
@@ -160,8 +191,8 @@ export default function VisaChatBotPayment() {
                 <CardTitle>Ödeme Bilgileri</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p>- Tüm ödemeler güvenli altyapı üzerinden yapılmaktadır.</p>
-                <p>- Kredi kartı, banka kartı ve diğer yerel ödeme yöntemleri kabul edilmektedir.</p>
+                <p>- Tüm ödemeler güvenli iyzico altyapısı üzerinden yapılmaktadır.</p>
+                <p>- Kredi kartı ve banka kartı ile ödeme yapabilirsiniz.</p>
                 <p>- Abonelikler otomatik olarak yenilenir, istediğiniz zaman iptal edebilirsiniz.</p>
                 <p>- İlk 7 gün içinde iade garantisi sunuyoruz.</p>
               </CardContent>
@@ -186,7 +217,7 @@ export default function VisaChatBotPayment() {
       <div className="mt-12 text-center">
         <p className="text-sm text-gray-500 flex items-center justify-center">
           <Lock className="mr-1 h-4 w-4" />
-          Tüm ödemeler 256-bit SSL şifrelemesi ile güvence altındadır.
+          Tüm ödemeler iyzico altyapısı ile 256-bit SSL şifrelemesi kullanılarak güvence altındadır.
         </p>
       </div>
     </div>
