@@ -2,10 +2,11 @@ import type {
   IRegisterData,
   ILoginData,
   ILoginErrorResponse,
-  IMemberResponse,
+//   IMemberResponse,
   IRegisterSuccessResponse,
   IRegisterErrorResponse,
   IMember,
+  IToken,
 } from "@/interfaces/member";
 import { ApiServices } from "@/services/api";
 
@@ -26,14 +27,15 @@ export class MemberHelper {
 
   async login(
     data: ILoginData
-  ): Promise<IMemberResponse | ILoginErrorResponse> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<IToken | any | ILoginErrorResponse> {
     return this.api.post("/member/login", data, {
       "Content-Type": "application/json",
     });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async getMemberById(username: string): Promise<IMember | any> {
+  async getMemberByUsername(username: string): Promise<IMember | any> {
     return this.api.get(`/member/${username}`, {
       "Content-Type": "application/json",
     });

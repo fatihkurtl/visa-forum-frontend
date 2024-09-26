@@ -38,7 +38,7 @@ export interface IRoles {
 export interface IMember {
   id: number;
   roles: IRoles;
-  tokens: IToken[];
+  auth: IToken[];
   firstname: string;
   lastname: string;
   username: string;
