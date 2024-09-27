@@ -33,6 +33,14 @@ export default function MembersPage() {
     return matchesSearch && matchesRole
   })
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("tr-TR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    });
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Forum Members</h1>
@@ -80,7 +88,7 @@ export default function MembersPage() {
                 <Badge variant={member.role === "Admin" ? "destructive" : member.role === "Moderator" ? "default" : "secondary"}>
                   {member.role}
                 </Badge>
-                <span className="text-sm text-gray-500">Joined {new Date(member.joined).toLocaleDateString()}</span>
+                <span className="text-sm text-gray-500">Joined {formatDate(member.joined)}</span>
               </div>
               <p className="text-sm text-gray-600 mb-4">Posts: {member.posts}</p>
               <div className="flex space-x-2">

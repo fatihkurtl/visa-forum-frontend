@@ -22,5 +22,10 @@ export const removeMemberCookies = async () => {
 
 export const getMemberCookies = async () => {
   const authData = await cookieStore.get("authData");
-  return { authData };
+  const data = JSON.parse(authData?.value || "{}");
+  if (data.token && data.expires_at) {
+    return true;
+  } else {
+    return false;
+  }
 };

@@ -1,20 +1,24 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
+import { usePathname } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { Input } from "@/components/ui/input"
-import { SearchIcon, BellIcon, MenuIcon, UserIcon, LogOutIcon, SettingsIcon } from "lucide-react"
+import { SearchIcon, BellIcon, MenuIcon, UserIcon, LogOutIcon, LogIn, UserPlus, Settings } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Link from "next/link"
 import { slugify } from "@/utils/slugify"
 import Image from "next/image"
+import { getMemberCookies, removeMemberCookies } from "@/middlewares/cookies"
 
 export default function Header() {
+  const currentPath = usePathname()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
+  const [isAuth, setIsAuth] = useState<boolean>(false)
 
   const notificationRef = useRef<HTMLDivElement>(null)
   const userDropdownRef = useRef<HTMLDivElement>(null)
@@ -41,6 +45,24 @@ export default function Header() {
     { id: 3, text: "Yeni forum duyurusu", time: "1 gün önce" },
   ]
 
+  const handleLogout = async () => {
+    await removeMemberCookies()
+    window.location.href = "/login"
+  }
+
+  useEffect(() => {
+    const handleAuth = async () => {
+      const memberAuth = await getMemberCookies()
+
+      if (memberAuth) {
+        setIsAuth(memberAuth)
+      }
+
+    }
+
+    handleAuth()
+  }, [])
+
   return (
     <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
       <div className="container mx-auto px-4 py-3">
@@ -50,19 +72,19 @@ export default function Header() {
             <h1 className="text-xl font-bold text-gray-800">VisaConnect Forum</h1>
           </Link>
           <nav className="hidden lg:flex space-x-6">
-            <Link href="/" className="text-gray-600 hover:text-gray-800 font-medium">
+            <Link href="/" className={currentPath === "/" ? "text-gray-600 hover:text-gray-800 font-semibold" : "text-gray-600 hover:text-gray-800 font-medium "}>
               Anasayfa
             </Link>
-            <Link href="/threads" className="text-gray-600 hover:text-gray-800 font-medium">
+            <Link href="/threads" className={currentPath === "/threads" ? "text-gray-600 hover:text-gray-800 font-semibold" : "text-gray-600 hover:text-gray-800 font-medium "}>
               Konular
             </Link>
-            <Link href="/categories" className="text-gray-600 hover:text-gray-800 font-medium">
+            <Link href="/categories" className={currentPath === "/categories" ? "text-gray-600 hover:text-gray-800 font-semibold" : "text-gray-600 hover:text-gray-800 font-medium "}>
               Kategoriler
             </Link>
-            <Link href="/members" className="text-gray-600 hover:text-gray-800 font-medium">
+            <Link href="/members" className={currentPath === "/members" ? "text-gray-600 hover:text-gray-800 font-semibold" : "text-gray-600 hover:text-gray-800 font-medium "}>
               Üyeler
             </Link>
-            <Link href="/visaBot" className="text-gray-600 hover:text-gray-800 font-medium">
+            <Link href="/visaBot" className={currentPath === "/visaBot" ? "text-gray-600 hover:text-gray-800 font-semibold" : "text-gray-600 hover:text-gray-800 font-medium "}>
               Vize Sohbet Botu (Çok Yakında)
             </Link>
           </nav>
@@ -128,15 +150,29 @@ export default function Header() {
               </Button>
               {isUserDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                  <Link href={`/members/${slugify("John Doe")}`} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                    <UserIcon className="mr-2 h-4 w-4" /> Profile
-                  </Link>
-                  <Link href="/settings" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                    <SettingsIcon className="mr-2 h-4 w-4" /> Settings
-                  </Link>
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
-                    <LogOutIcon className="mr-2 h-4 w-4" /> Sign out
-                  </button>
+                  {!isAuth ? (
+                    <>
+                      <Link href="/register" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                        <UserPlus className="mr-2 h-4 w-4" /> Kayıt ol
+                      </Link>
+                      <Link href="/login" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                        <LogIn className="mr-2 h-4 w-4" /> Oturum aç
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href={`/members/${slugify("John Doe")}`} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                        <UserIcon className="mr-2 h-4 w-4" /> Profil
+                      </Link>
+                      <Link href="/settings" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                        <Settings className="mr-2 h-4 w-4" /> Ayarlar
+                      </Link>
+                      <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                        <LogOutIcon className="mr-2 h-4 w-4" /> Çıkış yap
+                      </button>
+                    </>
+                  )
+                  }
                 </div>
               )}
             </div>
@@ -160,19 +196,19 @@ export default function Header() {
             className="lg:hidden bg-white border-t"
           >
             <div className="container mx-auto px-4 py-2 flex flex-col space-y-2">
-              <Link href="/" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
+              <Link href="/" className={currentPath === "/" ? "text-gray-600 hover:text-gray-800 py-2 font-semibold" : "text-gray-600 hover:text-gray-800 py-2 font-medium "}>
                 Anasayfa
               </Link>
-              <Link href="/threads" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
+              <Link href="/threads" className={currentPath === "/threads" ? "text-gray-600 hover:text-gray-800 py-2 font-semibold" : "text-gray-600 hover:text-gray-800 py-2 font-medium "}>
                 Konular
               </Link>
-              <Link href="/categories" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
+              <Link href="/categories" className={currentPath === "/categories" ? "text-gray-600 hover:text-gray-800 py-2 font-semibold" : "text-gray-600 hover:text-gray-800 py-2 font-medium "}>
                 Kategoriler
               </Link>
-              <Link href="/members" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
+              <Link href="/members" className={currentPath === "/members" ? "text-gray-600 hover:text-gray-800 py-2 font-semibold" : "text-gray-600 hover:text-gray-800 py-2 font-medium "}>
                 Üyeler
               </Link>
-              <Link href="/visaBot" className="text-gray-600 hover:text-gray-800 py-2 font-medium">
+              <Link href="/visaBot" className={currentPath === "/visaBot" ? "text-gray-600 hover:text-gray-800 py-2 font-semibold" : "text-gray-600 hover:text-gray-800 py-2 font-medium "}>
                 Vize Sohbet Botu (Çok Yakında)
               </Link>
               <div className="relative">
