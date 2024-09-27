@@ -1,15 +1,15 @@
 "use client"
-
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from 'next/navigation'
+import logo from '@/public/assets/logo.png'
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { SearchIcon, BellIcon, MenuIcon, UserIcon, LogOutIcon, LogIn, UserPlus, Settings } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { slugify } from "@/utils/slugify"
-import Image from "next/image"
 import { getMemberCookies, removeMemberCookies } from "@/middlewares/cookies"
 
 export default function Header() {
@@ -68,7 +68,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.svg" alt="VisaConnect Forum Logo" width={40} height={40} className="h-8 w-8" />
+            <Image src={logo} alt="VisaConnect Forum Logo" width={40} height={40} className="h-8 w-8" />
             <h1 className="text-xl font-bold text-gray-800">VisaConnect Forum</h1>
           </Link>
           <nav className="hidden lg:flex space-x-6">
