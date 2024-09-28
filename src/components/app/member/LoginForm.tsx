@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,6 +16,7 @@ const memberHelper = new MemberHelper(api)
 
 export default function LoginForm() {
     const { toast } = useToast()
+    const router = useRouter()
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [formData, setFormData] = useState<ILoginData>({
@@ -56,6 +58,7 @@ export default function LoginForm() {
                     description: "Hoşgeldiniz.",
                 });
                 setError(null);
+                console.log(response);
                 await setMemberCookies(response);
                 setFormData({ identifier: "", password: "" });
                 setRemember(false);
@@ -69,7 +72,6 @@ export default function LoginForm() {
             console.error(error)
         }
     }
-
 
     return (
         <form className="space-y-4 max-w-sm mx-auto w-full" onSubmit={handleSubmit}>

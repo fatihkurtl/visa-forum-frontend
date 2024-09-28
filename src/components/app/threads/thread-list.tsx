@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,12 +20,51 @@ import {
   FilterIcon,
 } from "lucide-react";
 import { slugify } from "@/utils/slugify";
-import Link from "next/link";
+import { ICategory } from "@/interfaces/thread";
+import { ThreadHelper } from "@/helpers/threads"
+import api from "@/services/api"
 
+
+const threadHelper = new ThreadHelper(api);
 
 export default function ThreadList() {
+
   const [sortBy, setSortBy] = useState("latest");
   const [filterCategory, setFilterCategory] = useState("all");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  // const [threads, setThreads] = useState([]);
+
+  useEffect(() => {
+    const getCategories = async () => {
+      setLoading(true);
+      try {
+        const response: ICategory[] = await threadHelper.getCategories();
+        console.log("Categories: ", response);
+        if (!response) return;
+        setCategories(response.reverse());
+        setLoading(false);
+      } catch (error) {
+        console.log("Error: ", error);
+        setError("Hata oluştu, Kategoriler alınırken bir hata oluştu");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getCategories();
+  }, []);
+
+
+  useEffect(() => {
+    const getThreads = async () => {
+      const response = threadHelper.getThreads();
+      console.log("Threads: ", response);
+    }
+
+    getThreads();
+  }, [])
 
   const threads = [
     {
@@ -102,10 +142,10 @@ export default function ThreadList() {
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="latest">Latest</SelectItem>
-                  <SelectItem value="mostViewed">Most Viewed</SelectItem>
+                  <SelectItem value="latest">En Son</SelectItem>
+                  <SelectItem value="mostViewed">En Çok Okunan</SelectItem>
                   <SelectItem value="mostReplies">
-                    Most Replies
+                    En Çok Yanıtlanan
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -120,16 +160,13 @@ export default function ThreadList() {
                   <SelectValue placeholder="Filter by category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Tourist Visa">
-                    Tourist Visa
-                  </SelectItem>
-                  <SelectItem value="Schengen Visa">
-                    Schengen Visa
-                  </SelectItem>
-                  <SelectItem value="Student Visa">
-                    Student Visa
-                  </SelectItem>
+                  <SelectItem value="all">Tüm Kategoriler</SelectItem>
+                  {categories && categories.length > 0 &&
+                    categories.map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>

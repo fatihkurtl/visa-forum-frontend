@@ -66,11 +66,11 @@ export default function Sidebar() {
         </CardHeader>
         <CardContent>
           <ul className="space-y-2">
-            {categories.length > 0 ? (
+            {categories && categories.length > 0 ? (
               categories.map((category) => (
                 <li key={category.id}>
                   <Link href={`/categories/${slugify(category.name)}`} className="text-gray-600 hover:text-gray-800">
-                    {category.name} ({category.threads.length})
+                    {category.name} ({category.threads?.length > 0 ? category.threads.length : 0})
                   </Link>
                 </li>
               ))

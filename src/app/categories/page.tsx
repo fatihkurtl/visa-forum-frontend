@@ -5,10 +5,10 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plane, Globe, FileText, Users, HelpCircle, Briefcase, GraduationCap, Heart } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ICategory } from "@/interfaces/thread"
 import { ThreadHelper } from "@/helpers/threads"
 import api from "@/services/api"
-import { Skeleton } from "@/components/ui/skeleton"
 
 const threadHelper = new ThreadHelper(api);
 
@@ -22,7 +22,7 @@ export default function CategoriesPage() {
     const getCategories = async () => {
       setLoading(true);
       try {
-        const response = await threadHelper.getCategories();
+        const response: ICategory[] = await threadHelper.getCategories();
         console.log("Categories: ", response);
         if (!response) return;
         setCategories(response.reverse());
@@ -37,7 +37,6 @@ export default function CategoriesPage() {
 
     getCategories();
   }, []);
-
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -89,6 +88,7 @@ export default function CategoriesPage() {
           )
         )
         }
+        {error !== null && <p className="text-red-500">{error}</p>}
       </div>
     </div>
   )

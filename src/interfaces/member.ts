@@ -44,7 +44,6 @@ export interface IMember {
   username: string;
   email: string;
   profile_image: string | null;
-  password: string;
   terms: boolean;
   ip_address: string | null;
   email_verified: boolean;

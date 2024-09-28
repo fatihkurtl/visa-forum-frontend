@@ -7,10 +7,10 @@ import logo from '@/public/assets/logo.png'
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { Input } from "@/components/ui/input"
-import { SearchIcon, BellIcon, MenuIcon, UserIcon, LogOutIcon, LogIn, UserPlus, Settings } from "lucide-react"
+import { SearchIcon, BellIcon, MenuIcon, UserIcon, LogOutIcon, LogIn, UserPlus, Settings, PencilLine, PlusCircleIcon } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { slugify } from "@/utils/slugify"
-import { getMemberCookies, removeMemberCookies } from "@/middlewares/cookies"
+import { isMemberAuthenticated, removeMemberCookies } from "@/middlewares/cookies"
 
 export default function Header() {
   const currentPath = usePathname()
@@ -52,8 +52,8 @@ export default function Header() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      const memberAuth = await getMemberCookies()
-
+      const memberAuth = await isMemberAuthenticated()
+      console.log(memberAuth);
       if (memberAuth) {
         setIsAuth(memberAuth)
       }
@@ -163,6 +163,9 @@ export default function Header() {
                     <>
                       <Link href={`/members/${slugify("John Doe")}`} className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
                         <UserIcon className="mr-2 h-4 w-4" /> Profil
+                      </Link>
+                      <Link href="/threads/create" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                        <PencilLine className="mr-2 h-4 w-4" />  Konu oluştur
                       </Link>
                       <Link href="/settings" className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
                         <Settings className="mr-2 h-4 w-4" /> Ayarlar
