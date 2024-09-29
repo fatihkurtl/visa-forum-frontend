@@ -81,7 +81,6 @@ export default function ThreadList() {
         if (!response) return;
         setThreads(response);
         setLoading(false);
-        setError('sdafasdf');
         console.log("Threads: ", response);
       } catch (error) {
         console.error("Error: ", error);
