@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -74,9 +75,20 @@ export default function ThreadList() {
 
   useEffect(() => {
     const getThreads = async () => {
-      const response = await threadHelper.getThreads();
-      setThreads(response);
-      console.log("Threads: ", response);
+      try {
+        setLoading(true);
+        const response: IThread[] = await threadHelper.getThreads();
+        if (!response) return;
+        setThreads(response);
+        setLoading(false);
+        setError('sdafasdf');
+        console.log("Threads: ", response);
+      } catch (error) {
+        console.error("Error: ", error);
+        setError("Hata olası, Konular yüklenirken bir hata oluştu");
+      } finally {
+        setLoading(false);
+      }
     }
 
     getThreads();
@@ -147,7 +159,32 @@ export default function ThreadList() {
       </Card>
 
       <div className="space-y-4">
-        {threads && sortedAndFilteredThreads.length > 0 ? (
+        {loading && (
+          <>
+            <Card>
+              <CardContent className="p-4">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/3" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/3" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/3" />
+              </CardContent>
+            </Card>
+          </>
+        )}
+        {sortedAndFilteredThreads && (
           sortedAndFilteredThreads.map((thread, index) => (
             <motion.div
               key={thread.id}
@@ -195,9 +232,8 @@ export default function ThreadList() {
               </Card>
             </motion.div>
           ))
-        ) : (
-          <p className="text-gray-500">Hiç konu bulunamadı.</p>
         )}
+        {error !== null && <p className="text-red-500">{error}</p>}
       </div>
     </div>
   );
