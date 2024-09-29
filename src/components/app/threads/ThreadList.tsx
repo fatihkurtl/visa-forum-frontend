@@ -6,26 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  MessageSquareIcon,
-  UserIcon,
-  ClockIcon,
-  PlusCircleIcon,
-  FilterIcon,
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MessageSquareIcon, UserIcon, ClockIcon, PlusCircleIcon, FilterIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { slugify } from "@/utils/slugify";
 import { ICategory, IThread } from "@/interfaces/thread";
 import { ThreadHelper } from "@/helpers/threads"
 import api from "@/services/api"
 import { isMemberAuthenticated } from "@/middlewares/cookies";
 import { timeAgo } from "@/composables/date";
+import PaginationComp from "./Pagination";
 
 
 const threadHelper = new ThreadHelper(api);
@@ -145,46 +135,51 @@ export default function ThreadList() {
                 </SelectContent>
               </Select>
             </div>
-            {isAuth && (
+            {isAuth ? (
               <Link href="/threads/create">
                 <Button>
                   <PlusCircleIcon className="mr-2 h-5 w-5" />
                   Yeni Konu
                 </Button>
               </Link>
-            )}
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button>
+                      <PlusCircleIcon className="mr-2 h-5 w-5" />
+                      Yeni Konu
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Yeni bir konu başlatmak ister misiniz? Lütfen <Link href="/login" className="underline text-blue-500 hover:text-blue-600">oturum açın</Link> ve hemen başlayın!
+                    </p>
+                  </TooltipContent>
+
+                </Tooltip>
+              </TooltipProvider>
+            )
+
+            }
           </div>
         </CardContent>
       </Card>
 
       <div className="space-y-4">
         {loading && (
-          <>
-            <Card>
+          Array.from({ length: 6 }).map((_, index) => (
+            <Card key={index}>
               <CardContent className="p-4">
                 <Skeleton className="h-4 w-1/3" />
                 <Skeleton className="h-4 w-1/3" />
                 <Skeleton className="h-4 w-1/3" />
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="p-4">
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-4 w-1/3" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-4 w-1/3" />
-              </CardContent>
-            </Card>
-          </>
+          ))
         )}
         {sortedAndFilteredThreads && (
-          sortedAndFilteredThreads.map((thread, index) => (
+          sortedAndFilteredThreads.reverse().map((thread, index) => (
             <motion.div
               key={thread.id}
               initial={{ opacity: 0, y: 20 }}
@@ -232,6 +227,7 @@ export default function ThreadList() {
             </motion.div>
           ))
         )}
+        < PaginationComp />
         {error !== null && <p className="text-red-500">{error}</p>}
       </div>
     </div>

@@ -1,5 +1,5 @@
 "use client";
-import ThreadList from "@/components/app/threads/thread-list";
+import ThreadList from "@/components/app/threads/ThreadList";
 import Sidebar from "@/layouts/app/sidebar";
 
 export default function Threads() {
