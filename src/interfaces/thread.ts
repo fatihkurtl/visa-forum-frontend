@@ -1,4 +1,4 @@
-interface Reply {
+export interface Reply {
   id: number;
   content: string;
   author: string;
@@ -7,7 +7,7 @@ interface Reply {
   updated_at: string;
 }
 
-interface Comment {
+export interface Comment {
   id: number;
   content: string;
   likes_count: number;
@@ -17,13 +17,14 @@ interface Comment {
   updated_at: string;
 }
 
-interface IThread {
+export interface IThread {
   id: number;
   title: string;
   content: string;
   category: string;
   author: string;
   likes_count: number;
+  views: number;
   comments: Comment[];
   is_active: boolean;
   created_at: string;

@@ -34,7 +34,6 @@ export default function Sidebar() {
     getCategories();
   }, []);
 
-
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };

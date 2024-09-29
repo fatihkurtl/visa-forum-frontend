@@ -1,4 +1,4 @@
-import type { ICategory } from "@/interfaces/thread";
+import type { ICategory, IThread } from "@/interfaces/thread";
 import { getMemberCookies } from "@/middlewares/cookies";
 import { ApiServices } from "@/services/api";
 
@@ -9,7 +9,7 @@ export class ThreadHelper {
     this.api = api;
   }
 
-  async getThreads(): Promise<any> {
+  async getThreads(): Promise<IThread[]> {
     return this.api.get("/threads", {
       "Content-Type": "application/json",
     });

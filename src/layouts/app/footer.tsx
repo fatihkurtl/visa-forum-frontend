@@ -1,11 +1,12 @@
 import Link from "next/link"
-import { Facebook, Twitter, Instagram } from "lucide-react"
+import { Facebook, Twitter, Instagram, Heart, Coffee } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function Footer() {
   return (
     <footer className="bg-white border-t mt-auto">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-800">VisaConnect Forum</h3>
             <p className="text-sm text-gray-600">
@@ -52,6 +53,20 @@ export default function Footer() {
               </li>
             </ul>
           </nav>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800">Support Us</h3>
+            <p className="text-sm text-gray-600">
+              Help us keep VisaConnect Forum running and improve our services.
+            </p>
+            <div className="space-y-2">
+              <Button variant="outline" className="w-full">
+                <Heart className="mr-2 h-4 w-4" /> Donate
+              </Button>
+              <Button variant="outline" className="w-full">
+                <Coffee className="mr-2 h-4 w-4" /> Buy us a coffee
+              </Button>
+            </div>
+          </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-600 mb-4 md:mb-0">

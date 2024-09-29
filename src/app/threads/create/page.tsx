@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast"
 import { ICategory, ICreateThread } from "@/interfaces/thread"
 import { ThreadHelper } from "@/helpers/threads"
 import api from "@/services/api"
-import { isMemberAuthenticated, setMemberCookies } from '@/middlewares/cookies'
+import { isMemberAuthenticated, removeMemberCookies, setMemberCookies } from '@/middlewares/cookies'
 
 const threadHelper = new ThreadHelper(api);
 
@@ -100,11 +100,10 @@ export default function CreateThread() {
     try {
       const response = await threadHelper.createThread(formData)
       if (response.token !== null && response.expires_at !== null) {
-        await setMemberCookies({
-          token: response.token,
-          expires_at: response.expires_at,
-        })
+        await removeMemberCookies();
+        await setMemberCookies(response)
         setFormData({ title: '', category: '', content: '' })
+        setError(null)
         toast({
           title: "Başarılı",
           description: "Konu oluşturuldu",

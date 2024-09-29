@@ -58,7 +58,7 @@ export default function LoginForm() {
                     description: "Hoşgeldiniz.",
                 });
                 setError(null);
-                console.log(response);
+                console.log("login response:", response);
                 await setMemberCookies(response);
                 setFormData({ identifier: "", password: "" });
                 setRemember(false);
@@ -124,7 +124,7 @@ export default function LoginForm() {
                     />
                     <Label htmlFor="remember" className="text-sm">Beni hatırla</Label>
                 </div>
-                <Link href="#" className="text-sm text-primary hover:underline">
+                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                     Şifrenizi mi unuttunuz?
                 </Link>
             </div>
