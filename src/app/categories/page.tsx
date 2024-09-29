@@ -25,7 +25,7 @@ export default function CategoriesPage() {
         const response: ICategory[] = await threadHelper.getCategories();
         console.log("Categories: ", response);
         if (!response) return;
-        setCategories(response.reverse());
+        setCategories(response);
         setLoading(false);
       } catch (error) {
         console.log("Error: ", error);

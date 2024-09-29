@@ -24,7 +24,7 @@ export default function Sidebar() {
         const response = await threadHelper.getCategories();
         console.log("Categories: ", response);
         if (!response) return;
-        setCategories(response.reverse());
+        setCategories(response);
       } catch (error) {
         console.log("Error: ", error);
         setError("Hata oluştu, Kategoriler alınırken bir hata oluştu");

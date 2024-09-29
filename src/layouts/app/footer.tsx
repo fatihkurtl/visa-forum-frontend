@@ -1,8 +1,20 @@
+"use client"
 import Link from "next/link"
 import { Facebook, Twitter, Instagram, Heart, Coffee } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function Footer() {
+
+  const handleDonate = () => {
+    // Redirect to donation page or open donation modal
+    window.open('https://your-donation-link.com', '_blank');
+  }
+
+  const handleBuyCoffee = () => {
+    // Redirect to Buy Me a Coffee page or similar
+    window.open('https://www.buymeacoffee.com/your-page', '_blank');
+  }
+
   return (
     <footer className="bg-white border-t mt-auto">
       <div className="container mx-auto px-4 py-8">
@@ -59,10 +71,10 @@ export default function Footer() {
               Help us keep VisaConnect Forum running and improve our services.
             </p>
             <div className="space-y-2">
-              <Button variant="outline" className="w-full">
+              <Button onClick={handleDonate} variant="outline" className="w-full">
                 <Heart className="mr-2 h-4 w-4" /> Donate
               </Button>
-              <Button variant="outline" className="w-full">
+              <Button onClick={handleBuyCoffee} variant="outline" className="w-full">
                 <Coffee className="mr-2 h-4 w-4" /> Buy us a coffee
               </Button>
             </div>

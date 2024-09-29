@@ -15,6 +15,8 @@ import { ICategory, ICreateThread } from "@/interfaces/thread"
 import { ThreadHelper } from "@/helpers/threads"
 import api from "@/services/api"
 import { isMemberAuthenticated, removeMemberCookies, setMemberCookies } from '@/middlewares/cookies'
+import 'react-quill/dist/quill.snow.css';
+
 
 const threadHelper = new ThreadHelper(api);
 
@@ -44,7 +46,7 @@ export default function CreateThread() {
         const response: ICategory[] = await threadHelper.getCategories();
         console.log("Categories: ", response);
         if (!response) return;
-        setCategories(response.reverse());
+        setCategories(response);
         setLoading(false);
       } catch (error) {
         console.log("Error: ", error);
@@ -202,8 +204,8 @@ export default function CreateThread() {
                         />
                       </TabsContent>
                       <TabsContent value="preview" className="mt-2">
-                        <div className="bg-white border rounded-md p-4 h-full overflow-auto">
-                          <div dangerouslySetInnerHTML={{ __html: formData.content }} />
+                        <div className="bg-white border rounded-md p-4 h-full overflow-auto ql-container ql-snow">
+                          <div className="ql-editor" dangerouslySetInnerHTML={{ __html: formData.content }} />
                         </div>
                       </TabsContent>
                     </Tabs>

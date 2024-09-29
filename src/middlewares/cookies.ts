@@ -17,12 +17,12 @@ export const setMemberCookies = async (data: IToken) => {
 };
 
 export const removeMemberCookies = async () => {
-  await cookieStore.delete("authData");
+  cookieStore.delete("authData");
 };
 
 export const getMemberCookies = async () => {
   try {
-    const authData = await cookieStore.get("authData");
+    const authData = cookieStore.get("authData");
     if (!authData) return null;
     const data = JSON.parse(authData?.value || "{}");
     const { token, expires_at } = data;

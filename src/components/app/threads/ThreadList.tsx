@@ -15,7 +15,6 @@ import { ThreadHelper } from "@/helpers/threads"
 import api from "@/services/api"
 import { isMemberAuthenticated } from "@/middlewares/cookies";
 import { timeAgo } from "@/composables/date";
-import PaginationComp from "./Pagination";
 
 
 const threadHelper = new ThreadHelper(api);
@@ -28,6 +27,7 @@ export default function ThreadList() {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [threads, setThreads] = useState<IThread[]>([]);
+  const [visibleThreadsCount, setVisibleThreadsCount] = useState<number>(10);
 
   useEffect(() => {
     const handleAuth = async () => {
@@ -49,7 +49,7 @@ export default function ThreadList() {
         const response: ICategory[] = await threadHelper.getCategories();
         console.log("Categories: ", response);
         if (!response) return;
-        setCategories(response.reverse());
+        setCategories(response);
         setLoading(false);
       } catch (error) {
         console.log("Error: ", error);
@@ -94,6 +94,10 @@ export default function ThreadList() {
       if (sortBy === "mostReplies") return b.comments.length - a.comments.length;
       return 0;
     });
+
+  const handleLoadMore = () => {
+    setVisibleThreadsCount((prevCount) => prevCount + 10);
+  };
 
   return (
     <div className="md:col-span-3">
@@ -159,13 +163,10 @@ export default function ThreadList() {
 
                 </Tooltip>
               </TooltipProvider>
-            )
-
-            }
+            )}
           </div>
         </CardContent>
       </Card>
-
       <div className="space-y-4">
         {loading && (
           Array.from({ length: 6 }).map((_, index) => (
@@ -179,7 +180,7 @@ export default function ThreadList() {
           ))
         )}
         {sortedAndFilteredThreads && (
-          sortedAndFilteredThreads.reverse().map((thread, index) => (
+          sortedAndFilteredThreads.slice(0, visibleThreadsCount).map((thread, index) => (
             <motion.div
               key={thread.id}
               initial={{ opacity: 0, y: 20 }}
@@ -227,7 +228,13 @@ export default function ThreadList() {
             </motion.div>
           ))
         )}
-        < PaginationComp />
+        <div className="mt-4 text-center">
+          {sortedAndFilteredThreads.length > visibleThreadsCount && (
+            <Button onClick={handleLoadMore} variant="outline" size="sm" disabled={loading}>
+              Daha Fazla Yükle
+            </Button>
+          )}
+        </div>
         {error !== null && <p className="text-red-500">{error}</p>}
       </div>
     </div>
