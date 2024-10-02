@@ -192,7 +192,12 @@ export default function ThreadList() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600">
-                        <Link href={`/threads/${slugify(thread.title)}`}>{thread.title}</Link>
+                        <Link href={{
+                          pathname: `/threads/${slugify(thread.title)}`,
+                          query: { id: thread.id },
+                        }}>
+                          {thread.title}
+                        </Link>
                       </h3>
                       <p className="text-sm text-gray-500 mt-1">
                         "{thread.author}" tarafından oluşturuldu

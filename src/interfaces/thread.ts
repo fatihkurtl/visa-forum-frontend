@@ -1,20 +1,23 @@
-export interface Reply {
-  id: number;
-  content: string;
-  author: string;
-  likes: number[];
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Comment {
+export interface IReply {
   id: number;
   content: string;
   likes_count: number;
-  replies: Reply[];
   author: string;
   created_at: string;
   updated_at: string;
+  parent: number | null;
+  children: IReply[];
+}
+
+export interface IComment {
+  thread: number;
+  id: number;
+  content: string;
+  likes_count: number;
+  author: string;
+  created_at: string;
+  updated_at: string;
+  replies: IReply[];
 }
 
 export interface IThread {
@@ -22,13 +25,13 @@ export interface IThread {
   title: string;
   content: string;
   category: string;
+  views: number;
   author: string;
   likes_count: number;
-  views: number;
-  comments: Comment[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  comments: IComment[];
 }
 
 export interface ICategory {
