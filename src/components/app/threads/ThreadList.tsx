@@ -200,7 +200,7 @@ export default function ThreadList() {
                         </Link>
                       </h3>
                       <p className="text-sm text-gray-500 mt-1">
-                        "{thread.author}" tarafından oluşturuldu
+                      &apos;{thread.author}&apos; tarafından oluşturuldu
                       </p>
                     </div>
                     <Badge variant="secondary">{thread.category}</Badge>
