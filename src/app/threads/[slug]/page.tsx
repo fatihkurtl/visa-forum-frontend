@@ -1,80 +1,40 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { useSearchParams } from "next/navigation";
-import dynamic from 'next/dynamic'
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { CalendarIcon, UserIcon, FlagIcon, ThumbsUpIcon, ReplyIcon, SendIcon } from "lucide-react";
 import { ThreadHelper } from "@/helpers/threads"
+import { useToast } from "@/hooks/use-toast"
 import api from "@/services/api"
-import { IComment, IReply, IThread } from '@/interfaces/thread';
+import { IComment, ICreateComment, ICreateReply, IReply, IThread } from '@/interfaces/thread';
 import { timeAgo } from '@/composables/date';
 import 'react-quill/dist/quill.snow.css';
 import ReactConfetti from 'react-confetti';
+import ReportForm from '@/components/app/detail/ReportForm';
+import ReplyArea from '@/components/app/detail/RepyArea';
+import CommentForm from '@/components/app/detail/CommentForm';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 
 const threadHelper = new ThreadHelper(api);
 
-const ReplyComponent = ({ reply, depth = 0, onReply, onLike, onReport }: { reply: IReply; depth?: number; onReply: (type: 'reply', id: number) => void; onLike: (id: number) => void; onReport: (type: 'reply', id: number) => void }) => {
-  const maxDepth = 5; // Maximum depth for nested replies
 
-  return (
-    <div className={`ml-${depth * 4} flex space-x-4 mt-4`}>
-      <Avatar className="h-8 w-8">
-        <AvatarFallback>{reply.author.charAt(0)}</AvatarFallback>
-      </Avatar>
-      <div className="flex-1 space-y-2">
-        <div className="flex items-center justify-between">
-          <h5 className="font-semibold text-sm">{reply.author}</h5>
-          <span className="text-xs text-gray-500">{timeAgo(reply.created_at)}</span>
-        </div>
-        <p className="text-sm text-gray-600">{reply.content}</p>
-        <div className="flex items-center space-x-4 text-sm">
-          <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700" onClick={() => onLike(reply.id)}>
-            <ThumbsUpIcon className="h-3 w-3 mr-1" />
-            Beğen ({reply.likes_count})
-          </Button>
-          {depth < maxDepth && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-500 hover:text-gray-700"
-              onClick={() => onReply('reply', reply.id)}
-            >
-              <ReplyIcon className="h-3 w-3 mr-1" />
-              Yanıtla
-            </Button>
-          )}
-          <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700" onClick={() => onReport('reply', reply.id)}>
-            <FlagIcon className="h-3 w-3 mr-1" />
-            Raporla
-          </Button>
-        </div>
-        {reply.children && reply.children.length > 0 && (
-          <div className="space-y-4">
-            {reply.children.map((nestedReply: IReply) => (
-              <ReplyComponent key={nestedReply.id} reply={nestedReply} depth={depth + 1} onReply={onReply} onLike={onLike} onReport={onReport} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default function ThreadDetailPage({ searchParams }: { searchParams: any }) {
+export default function ThreadDetailPage({ searchParams }: { searchParams: { id: string } }) {
+  const { toast } = useToast()
   const [error, setError] = useState<string | null>(null);
   const [thread, setThread] = useState<IThread | null>(null);
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState<ICreateComment>({
+    thread_id: thread?.id || '',
+    content: '',
+  });
   const [replyingTo, setReplyingTo] = useState<{ type: 'comment' | 'reply', id: number } | null>(null);
-  const [replyContent, setReplyContent] = useState('');
+  const [replyContent, setReplyContent] = useState<ICreateReply>({
+    type: replyingTo?.type || '',
+    parent_id: replyingTo?.id || '',
+    content: '',
+  });
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportingItem, setReportingItem] = useState<{ type: 'thread' | 'comment' | 'reply', id: number } | null>(null);
   const [reportReasons, setReportReasons] = useState({
@@ -102,18 +62,37 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
     getThreadDetail();
   }, [searchParams.id]);
 
+  const handleChangeComment = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewComment(prevComment => ({ ...prevComment, thread_id: thread?.id || '', content: event.target.value }));
+  };
+
+  const handleChangeReply = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReplyContent(prevReply => ({ ...prevReply, parent_id: replyingTo?.id || '', content: event.target.value }));
+  };
+
   const handleAddComment = async () => {
-    if (newComment.trim() && thread) {
+    if (newComment.content !== '' && thread) {
       try {
-        const newCommentData = await threadHelper.addComment(thread.id, newComment);
-        setThread(prevThread => {
-          if (!prevThread) return null;
-          return {
-            ...prevThread,
-            comments: [...prevThread.comments, newCommentData]
-          };
-        });
-        setNewComment('');
+        const response = await threadHelper.addComment(newComment as ICreateComment);
+        console.log(response);
+        if (!response) return;
+        if (!thread) return;
+        if (response.status === 'success') {
+          toast({
+            title: 'Başarılı',
+            description: response.message,
+            variant: 'default',
+          });
+        }
+        // setThread(prevThread => {
+        //   if (!prevThread) return null;
+        //   return {
+        //     ...prevThread,
+        //     comments: [...prevThread.comments, newCommentData]
+        //   };
+        // });
+        console.log(response);
+        setNewComment({ thread_id: thread.id, content: '' });
       } catch (error) {
         console.error("Error adding comment:", error);
         setError("Yorum eklenirken bir hata oluştu");
@@ -122,37 +101,32 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
   };
 
   const handleReply = async () => {
-    if (replyContent.trim() && thread && replyingTo) {
+    if (replyContent.content !== '' && thread && replyingTo) {
+      console.log(replyingTo, replyContent);
       try {
         let newReplyData: any;
         if (replyingTo.type === 'comment') {
-          newReplyData = await threadHelper.addReply(replyingTo.id, replyContent);
-          setThread(prevThread => {
-            if (!prevThread) return null;
-            return {
-              ...prevThread,
-              comments: prevThread.comments.map(comment => 
-                comment.id === replyingTo.id 
-                  ? { ...comment, replies: [...comment.replies, newReplyData] }
-                  : comment
-              )
-            };
-          });
+          newReplyData = await threadHelper.addReply(replyContent);
+          // setThread(prevThread => {
+          //   if (!prevThread) return null;
+          //   return {
+          //     ...prevThread,
+          //     comments: prevThread.comments.map(comment =>
+          //       comment.id === replyingTo.id
+          //         ? { ...comment, replies: [...comment.replies, newReplyData] }
+          //         : comment
+          //     )
+          //   };
+          // });
+          console.log(replyingTo, replyContent);
         } else {
-          newReplyData = await threadHelper.addReplyToReply(replyingTo.id, replyContent);
-          setThread(prevThread => {
-            if (!prevThread) return null;
-            return {
-              ...prevThread,
-              comments: prevThread.comments.map(comment => ({
-                ...comment,
-                replies: updateRepliesRecursively(comment.replies, replyingTo.id, newReplyData)
-              }))
-            };
-          });
+          newReplyData = await threadHelper.addReplyToReply(replyContent);
+          
+          console.log(replyContent);
         }
+
         setReplyingTo(null);
-        setReplyContent('');
+        setReplyContent({ type: '', parent_id: '', content: '' });
       } catch (error) {
         console.error("Error adding reply:", error);
         setError("Yanıt eklenirken bir hata oluştu");
@@ -160,23 +134,21 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
     }
   };
 
-  const updateRepliesRecursively = (replies: IReply[], targetId: number, newReply: IReply): IReply[] => {
-    return replies.map(reply => {
-      if (reply.id === targetId) {
-        return { ...reply, children: [...(reply.children || []), newReply] };
-      }
-      if (reply.children) {
-        return { ...reply, children: updateRepliesRecursively(reply.children, targetId, newReply) };
-      }
-      return reply;
-    });
-  };
+  // const updateRepliesRecursively = (replies: IReply[], targetId: number, newReply: IReply): IReply[] => {
+  //   return replies.map(reply => {
+  //     if (reply.id === targetId) {
+  //       return { ...reply, children: [...(reply.children || []), newReply] };
+  //     }
+  //     if (reply.children) {
+  //       return { ...reply, children: updateRepliesRecursively(reply.children, targetId, newReply) };
+  //     }
+  //     return reply;
+  //   });
+  // };
 
   const handleReportSubmit = async () => {
     if (reportingItem) {
-      // Here you would typically send the report to your backend
       console.log('Report submitted:', { type: reportingItem.type, id: reportingItem.id, reasons: reportReasons, explanation: reportExplanation });
-      // Reset the form and close the modal
       setReportReasons({ spam: false, harassment: false, inappropriate: false, other: false });
       setReportExplanation('');
       setIsReportModalOpen(false);
@@ -187,8 +159,6 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
   const handleThreadLike = async () => {
     if (thread) {
       try {
-        // Here you would typically send the like to your backend
-        // For now, we'll just update the local state
         setThread(prevThread => {
           if (!prevThread) return null;
           return {
@@ -197,7 +167,7 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
           };
         });
         setShowConfetti(true);
-        setTimeout(() => setShowConfetti(false), 5000); // Hide confetti after 5 seconds
+        setTimeout(() => setShowConfetti(false), 5000);
       } catch (error) {
         console.error("Error liking thread:", error);
         setError("Beğeni eklenirken bir hata oluştu");
@@ -208,14 +178,12 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
   const handleCommentLike = async (commentId: number) => {
     if (thread) {
       try {
-        // Here you would typically send the like to your backend
-        // For now, we'll just update the local state
         setThread(prevThread => {
           if (!prevThread) return null;
           return {
             ...prevThread,
-            comments: prevThread.comments.map(comment => 
-              comment.id === commentId 
+            comments: prevThread.comments.map(comment =>
+              comment.id === commentId
                 ? { ...comment, likes_count: comment.likes_count + 1 }
                 : comment
             )
@@ -231,8 +199,6 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
   const handleReplyLike = async (replyId: number) => {
     if (thread) {
       try {
-        // Here you would typically send the like to your backend
-        // For now, we'll just update the local state
         setThread(prevThread => {
           if (!prevThread) return null;
           return {
@@ -339,7 +305,7 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
                   <div className="flex items-center space-x-4 text-sm">
                     <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700" onClick={() => handleCommentLike(comment.id)}>
                       <ThumbsUpIcon className="h-4 w-4 mr-1" />
-                      Be�en ({comment.likes_count})
+                      Beğen ({comment.likes_count})
                     </Button>
                     <Button
                       variant="ghost"
@@ -359,8 +325,10 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
                     <div className="mt-2 flex space-x-2">
                       <Textarea
                         placeholder="Yanıtınızı yazın..."
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
+                        value={replyContent.content}
+                        name="content"
+                        id="content"
+                        onChange={handleChangeReply}
                         className="flex-1"
                       />
                       <Button onClick={handleReply}>
@@ -372,10 +340,10 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
               </div>
               <div className="ml-14 space-y-4">
                 {comment.replies.map((reply: IReply) => (
-                  <ReplyComponent 
-                    key={reply.id} 
-                    reply={reply} 
-                    onReply={setReplyingTo} 
+                  <ReplyArea
+                    key={reply.id}
+                    reply={reply}
+                    onReply={setReplyingTo}
                     onLike={handleReplyLike}
                     onReport={handleReport}
                   />
@@ -386,86 +354,18 @@ export default function ThreadDetailPage({ searchParams }: { searchParams: any }
         </CardContent>
       </Card>
 
-      <Card className="mt-6 sticky bottom-4">
-        <CardContent className="p-4">
-          <div className="flex space-x-4">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback>YA</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 flex space-x-2">
-              <Textarea
-                placeholder="Yorumunuzu buraya yazın..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                className="flex-1"
-              />
-              <Button onClick={handleAddComment}>
-                <SendIcon className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <CommentForm
+        newComment={newComment}
+        handleChangeComment={handleChangeComment}
+        handleAddComment={handleAddComment}
+      />
 
-      <Dialog open={isReportModalOpen} onOpenChange={setIsReportModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{reportingItem ? `${reportingItem.type.charAt(0).toUpperCase() + reportingItem.type.slice(1)}u Raporla` : 'Raporla'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Raporlama Nedeni</Label>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="spam"
-                    checked={reportReasons.spam}
-                    onCheckedChange={(checked) => setReportReasons(prev => ({ ...prev, spam: checked as boolean }))}
-                  />
-                  <Label htmlFor="spam">Spam</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="harassment"
-                    checked={reportReasons.harassment}
-                    onCheckedChange={(checked) => setReportReasons(prev => ({ ...prev, harassment: checked as boolean }))}
-                  />
-                  <Label htmlFor="harassment">Taciz</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="inappropriate"
-                    checked={reportReasons.inappropriate}
-                    onCheckedChange={(checked) => setReportReasons(prev => ({ ...prev, inappropriate: checked as boolean }))}
-                  />
-                  <Label htmlFor="inappropriate">Uygunsuz İçerik</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="other"
-                    checked={reportReasons.other}
-                    onCheckedChange={(checked) => setReportReasons(prev => ({ ...prev, other: checked as boolean }))}
-                  />
-                  <Label htmlFor="other">Diğer</Label>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="explanation">Açıklama (İsteğe bağlı)</Label>
-              <Textarea
-                id="explanation"
-                placeholder="Lütfen raporlama nedeninizi açıklayın..."
-                value={reportExplanation}
-                onChange={(e) => setReportExplanation(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsReportModalOpen(false)}>İptal</Button>
-            <Button onClick={handleReportSubmit}>Raporla</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ReportForm
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSubmit={handleReportSubmit}
+        reportingItemType={reportingItem?.type}
+      />
     </div>
   );
 }

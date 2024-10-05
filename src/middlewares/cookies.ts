@@ -13,6 +13,7 @@ export const setMemberCookies = async (data: IToken) => {
   cookieStore.set("authData", authData, {
     maxAge: 60 * 60 * 24,
     sameSite: "lax",
+    path: "/",
   });
 };
 

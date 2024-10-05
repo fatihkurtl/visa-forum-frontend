@@ -9,6 +9,12 @@ export interface IReply {
   children: IReply[];
 }
 
+export interface ICreateReply {
+  type: string;
+  parent_id: number | string;
+  content: string;
+}
+
 export interface IComment {
   thread: number;
   id: number;
@@ -18,6 +24,11 @@ export interface IComment {
   created_at: string;
   updated_at: string;
   replies: IReply[];
+}
+
+export interface ICreateComment {
+  thread_id: number | string;
+  content: string;
 }
 
 export interface IThread {

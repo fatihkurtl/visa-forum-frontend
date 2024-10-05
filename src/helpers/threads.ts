@@ -1,4 +1,4 @@
-import type { ICategory, IThread } from "@/interfaces/thread";
+import type { ICategory, ICreateComment, ICreateReply, IThread } from "@/interfaces/thread";
 import { getMemberCookies } from "@/middlewares/cookies";
 import { ApiServices } from "@/services/api";
 
@@ -15,31 +15,31 @@ export class ThreadHelper {
     });
   }
 
-  async getThread(id: number): Promise<IThread> {
+  async getThread(id: string): Promise<IThread> {
     return this.api.get(`/threads/${id}`, {
       "Content-Type": "application/json",
     });
   }
 
-  async addComment(id: number, comment: string): Promise<any> {
+  async addComment(comment: ICreateComment): Promise<any> {
     const token = await getMemberCookies();
-    return this.api.post(`/threads/${id}/comments`, { content: comment }, {
+    return this.api.post(`/threads/${comment.thread_id}/add/comment/`, comment, {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     });
   }
 
-  async addReply(id: number, comment: string): Promise<any> {
+  async addReply(reply: ICreateReply): Promise<any> {
     const token = await getMemberCookies();
-    return this.api.post(`/threads/${id}/replies`, { content: comment }, {
+    return this.api.post(`/threads/${reply.parent_id}/add/reply/`, reply, {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     });
   }
 
-  async addReplyToReply(id: number, comment: string): Promise<any> {
+  async addReplyToReply(reply: ICreateReply): Promise<any> {
     const token = await getMemberCookies();
-    return this.api.post(`/threads/${id}/replies`, { content: comment }, {
+    return this.api.post(`/threads/${reply.parent_id}/replies`, reply, {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     });

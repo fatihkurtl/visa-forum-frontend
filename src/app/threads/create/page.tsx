@@ -23,6 +23,7 @@ const threadHelper = new ThreadHelper(api);
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
 import Link from 'next/link'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function CreateThread() {
   const { toast } = useToast()
@@ -144,6 +145,16 @@ export default function CreateThread() {
     'list', 'bullet', 'indent',
     'link', 'image'
   ]
+
+if (loading) {
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-4xl mx-auto">
+        <Skeleton className="h-10 w-10 rounded-full" />
+      </div>
+    </div>
+  )
+}
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
